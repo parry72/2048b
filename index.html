@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>2048 AI ボタン盤面</title>
+  <title>2048 AI</title>
   <style>
     body {
       font-family: sans-serif;
@@ -12,14 +12,14 @@
     .grid {
       display: grid;
       grid-template-columns: repeat(4, 60px);
-      grid-gap: 10px;
+      gap: 10px;
       justify-content: center;
       margin-bottom: 20px;
     }
     .cell {
       width: 60px;
       height: 60px;
-      background-color: #eee;
+      background: #eee;
       font-size: 18px;
       line-height: 60px;
       border-radius: 5px;
@@ -29,25 +29,24 @@
     button {
       padding: 10px 20px;
       font-size: 16px;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>2048 AI 最適手を表示</h1>
+  <h1>2048 AI 最適手</h1>
   <div class="grid" id="board"></div>
   <button onclick="suggestMove()">最適手を表示</button>
   <p id="moveResult"></p>
 
-  <!-- AIロジックの読み込み -->
-  <script src="https://cdn.jsdelivr.net/gh/nneonneo/2048-ai/js/ai.js"></script>
+  <!-- AIライブラリ -->
+  <script src="https://rawcdn.githack.com/nneonneo/2048-ai/master/js/ai.js"></script>
 
   <script>
     const board = document.getElementById("board");
     const maxCount = 11;
     const labels = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Max"];
 
-    // マスの初期化
+    // マスを生成
     for (let i = 0; i < 16; i++) {
       const cell = document.createElement("div");
       cell.className = "cell";
@@ -62,27 +61,22 @@
       board.appendChild(cell);
     }
 
-    // 数値盤面をAI用に2の冪乗（2^count）に変換
+    // 盤面データを AI 用に変換
     function getGameState() {
-      const cells = document.querySelectorAll(".cell");
-      return Array.from(cells).map(cell => {
-        const count = parseInt(cell.dataset.count);
-        return count === 0 ? 0 : Math.pow(2, count);
+      return Array.from(document.querySelectorAll(".cell")).map(cell => {
+        let c = parseInt(cell.dataset.count);
+        return c === 0 ? 0 : Math.pow(2, c); // 2^n に変換
       });
     }
 
-    // AIを使って最適手を表示
+    // 最適手を表示
     function suggestMove() {
       const input = getGameState();
       const ai = new AI();
       const move = ai.getMove(input);
       const arrows = ["←", "↑", "→", "↓"];
-      const result = document.getElementById("moveResult");
-      if (move === -1) {
-        result.textContent = "合法手がありません（詰み）";
-      } else {
-        result.textContent = "最適手: " + arrows[move];
-      }
+      document.getElementById("moveResult").textContent =
+        move === -1 ? "合法手なし（詰み）" : "最適手: " + arrows[move];
     }
   </script>
 </body>
